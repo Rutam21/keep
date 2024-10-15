@@ -7,7 +7,10 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getApiURL } from "../../utils/apiUrl";
-import { useIncidents, usePollIncidents } from "../../utils/hooks/useIncidents";
+import {
+  useIncidents,
+  usePollIncidents,
+} from "../../entities/incidents/model/useIncidents";
 import Loading from "../loading";
 import { AlertDto } from "./models";
 

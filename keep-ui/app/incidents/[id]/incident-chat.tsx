@@ -3,21 +3,20 @@ import {
   CopilotKitCSSProperties,
   useCopilotChatSuggestions,
 } from "@copilotkit/react-ui";
-import { IncidentDto } from "../models";
+import { IncidentDto } from "@/entities/incidents/model";
 import {
   useIncident,
   useIncidentAlerts,
   useIncidents,
-} from "utils/hooks/useIncidents";
+} from "@/entities/incidents/model";
 import { EmptyStateCard } from "@/components/ui/EmptyStateCard";
 import { useRouter } from "next/navigation";
 import Loading from "app/loading";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { updateIncidentRequest } from "../create-or-update-incident";
-import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import "@copilotkit/react-ui/styles.css";
 import "./incident-chat.css";
+import { useIncidentsActions } from "@/entities/incidents/model/useIncidentsActions";
 
 export default function IncidentChat({ incident }: { incident: IncidentDto }) {
   const router = useRouter();
@@ -26,7 +25,7 @@ export default function IncidentChat({ incident }: { incident: IncidentDto }) {
   const { data: alerts, isLoading: alertsLoading } = useIncidentAlerts(
     incident.id
   );
-  const { data: session } = useSession();
+  const { updateIncident } = useIncidentsActions();
 
   useCopilotReadable({
     description: "incidentDetails",
@@ -76,20 +75,21 @@ export default function IncidentChat({ incident }: { incident: IncidentDto }) {
       },
     ],
     handler: async ({ name, summary }) => {
-      const response = await updateIncidentRequest({
-        session: session,
-        incidentId: incident.id,
-        incidentName: name,
-        incidentUserSummary: summary,
-        incidentAssignee: incident.assignee,
-        incidentSameIncidentInThePastId: incident.same_incident_in_the_past_id,
-        generatedByAi: true,
-      });
-
-      if (response.ok) {
+      try {
+        const updatedIncident = await updateIncident(incident.id, {
+          name: name,
+          summary: summary,
+          assignee: incident.assignee,
+          sameIncidentId: incident.same_incident_in_the_past_id,
+          generatedByAi: true,
+        });
         mutate();
         mutateIncident();
         toast.success("Incident updated successfully");
+      } catch (error) {
+        toast.error(
+          "Failed to update incident, please contact us if this issue persists."
+        );
       }
     },
   });

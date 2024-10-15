@@ -13,51 +13,16 @@ import {
 import { useSession } from "next-auth/react";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { getApiURL } from "utils/apiUrl";
-import { IncidentDto } from "./models";
-import { useIncidents } from "utils/hooks/useIncidents";
-import { Session } from "next-auth";
+import { IncidentDto } from "@/entities/incidents/model";
+import { useIncidents } from "@/entities/incidents/model";
 import { useUsers } from "utils/hooks/useUsers";
+import { IncidentsApi } from "@/entities/incidents/api";
 
 interface Props {
   incidentToEdit: IncidentDto | null;
   createCallback?: (id: string) => void;
   exitCallback?: () => void;
 }
-
-export const updateIncidentRequest = async ({
-  session,
-  incidentId,
-  incidentName,
-  incidentUserSummary,
-  incidentAssignee,
-  incidentSameIncidentInThePastId,
-  generatedByAi,
-}: {
-  session: Session | null;
-  incidentId: string;
-  incidentName: string;
-  incidentUserSummary: string;
-  incidentAssignee: string;
-  incidentSameIncidentInThePastId: string | null;
-  generatedByAi: boolean;
-}) => {
-  const apiUrl = getApiURL();
-  const response = await fetch(`${apiUrl}/incidents/${incidentId}?generatedByAi=${generatedByAi}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      user_generated_name: incidentName,
-      user_summary: incidentUserSummary,
-      assignee: incidentAssignee,
-      same_incident_in_the_past_id: incidentSameIncidentInThePastId,
-    }),
-  });
-  return response;
-};
 
 export default function CreateOrUpdateIncident({
   incidentToEdit,
@@ -97,27 +62,17 @@ export default function CreateOrUpdateIncident({
 
   const addIncident = async (e: FormEvent) => {
     e.preventDefault();
-    const apiUrl = getApiURL();
-    const response = await fetch(`${apiUrl}/incidents`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${session?.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_generated_name: incidentName,
-        user_summary: incidentUserSummary,
+    try {
+      const createdIncident = await IncidentsApi.createIncident(session, {
+        name: incidentName,
+        summary: incidentUserSummary,
         assignee: incidentAssignee,
-      }),
-    });
-    if (response.ok) {
+      });
       exitEditMode();
-      await mutate();
       toast.success("Incident created successfully");
-
-      const created = await response.json();
-      createCallback?.(created.id); // close the modal and associate the alert incident
-    } else {
+      await mutate(); // TODO: do it inside action?
+      createCallback?.(createdIncident.id); // close the modal and associate the alert incident
+    } catch (error) {
       toast.error(
         "Failed to create incident, please contact us if this issue persists."
       );
@@ -127,20 +82,22 @@ export default function CreateOrUpdateIncident({
   // This is the function that will be called on submitting the form in the editMode, it sends a PUT request to the backend.
   const updateIncident = async (e: FormEvent) => {
     e.preventDefault();
-    const response = await updateIncidentRequest({
-      session: session,
-      incidentId: incidentToEdit?.id!,
-      incidentName: incidentName,
-      incidentUserSummary: incidentUserSummary,
-      incidentAssignee: incidentAssignee,
-      incidentSameIncidentInThePastId: incidentToEdit?.same_incident_in_the_past_id!,
-      generatedByAi: false,
-    })
-    if (response.ok) {
+    try {
+      const updatedIncident = await IncidentsApi.updateIncident(
+        session,
+        incidentToEdit?.id!,
+        {
+          name: incidentName,
+          summary: incidentUserSummary,
+          assignee: incidentAssignee,
+          sameIncidentId: incidentToEdit?.same_incident_in_the_past_id!,
+          generatedByAi: false,
+        }
+      );
       exitEditMode();
       await mutate();
       toast.success("Incident updated successfully");
-    } else {
+    } catch (error) {
       toast.error(
         "Failed to update incident, please contact us if this issue persists."
       );

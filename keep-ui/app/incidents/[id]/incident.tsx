@@ -1,6 +1,6 @@
 "use client";
 import Loading from "app/loading";
-import { useIncident } from "utils/hooks/useIncidents";
+import { useIncident } from "../../../entities/incidents/model/useIncidents";
 import IncidentInformation from "./incident-info";
 import {
   Badge,

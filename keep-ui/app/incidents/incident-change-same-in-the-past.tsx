@@ -4,10 +4,10 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
-import { useIncidents, usePollIncidents } from "../../utils/hooks/useIncidents";
+import { useIncidents, usePollIncidents } from "@/entities/incidents/model";
 import Loading from "../loading";
-import { updateIncidentRequest } from "./create-or-update-incident";
-import { IncidentDto } from "./models";
+import { IncidentDto } from "@/entities/incidents/model";
+import { IncidentsApi } from "@/entities/incidents/api";
 
 interface ChangeSameIncidentInThePast {
   incident: IncidentDto;
@@ -32,19 +32,17 @@ const ChangeSameIncidentInThePast = ({
   const associateIncidentHandler = async (
     selectedIncidentId: string | null
   ) => {
-    const response = await updateIncidentRequest({
-      session: session,
-      incidentId: incident.id,
-      incidentSameIncidentInThePastId: selectedIncidentId,
-      incidentName: incident.user_generated_name,
-      incidentUserSummary: incident.user_summary,
-      incidentAssignee: incident.assignee,
-      generatedByAi: false,
-    });
-    if (response.ok) {
+    try {
+      const response = await IncidentsApi.updateIncident(session, incident.id, {
+        sameIncidentId: selectedIncidentId,
+      });
       mutate();
       toast.success("Incident updated successfully!");
       handleClose();
+    } catch (error) {
+      toast.error(
+        "Failed to update incident, please contact us if this issue persists."
+      );
     }
   };
 

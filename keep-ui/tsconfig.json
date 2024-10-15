@@ -23,6 +23,7 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["./components/*"],
+      "@/entities/*": ["./entities/*"],
       "@/app/*": ["./app/*"],
       "@/pages/*": ["./pages/*"],
       "@/utils/*": ["./utils/*"],

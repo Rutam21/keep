@@ -19,13 +19,13 @@ import {
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { IncidentDto } from "../models";
+import { IncidentDto } from "../../../entities/incidents/model/models";
 import IncidentPagination from "../incident-pagination";
 import {
   PaginatedWorkflowExecutionDto,
   WorkflowExecution,
 } from "app/workflows/builder/types";
-import { useIncidentWorkflowExecutions } from "utils/hooks/useIncidents";
+import { useIncidentWorkflowExecutions } from "../../../entities/incidents/model/useIncidents";
 import { useRouter } from "next/navigation";
 import {
   getIcon,

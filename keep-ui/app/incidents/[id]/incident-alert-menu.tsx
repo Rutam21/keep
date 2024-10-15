@@ -4,7 +4,7 @@ import { AlertDto } from "app/alerts/models";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { getApiURL } from "utils/apiUrl";
-import { useIncidentAlerts } from "utils/hooks/useIncidents";
+import { useIncidentAlerts } from "../../../entities/incidents/model/useIncidents";
 
 interface Props {
   incidentId: string;

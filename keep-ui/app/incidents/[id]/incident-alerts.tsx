@@ -22,13 +22,13 @@ import { getAlertLastReceieved } from "utils/helpers";
 import {
   useIncidentAlerts,
   usePollIncidentAlerts,
-} from "utils/hooks/useIncidents";
+} from "../../../entities/incidents/model/useIncidents";
 import AlertName from "app/alerts/alert-name";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import IncidentAlertMenu from "./incident-alert-menu";
 import IncidentPagination from "../incident-pagination";
 import React, { useEffect, useState } from "react";
-import { IncidentDto } from "../models";
+import { IncidentDto } from "../../../entities/incidents/model/models";
 
 interface Props {
   incident: IncidentDto;

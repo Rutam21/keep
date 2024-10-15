@@ -15,7 +15,7 @@ import {
 } from "react-select";
 import Select from "react-select";
 import { Table } from "@tanstack/react-table";
-import { IncidentDto } from "./models";
+import { IncidentDto } from "@/entities/incidents/model";
 import { WorkflowExecution } from "app/workflows/builder/types";
 import { AlertDto } from "../alerts/models";
 

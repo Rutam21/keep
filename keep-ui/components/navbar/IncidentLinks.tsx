@@ -7,8 +7,11 @@ import { Session } from "next-auth";
 import { Disclosure } from "@headlessui/react";
 import { IoChevronUp } from "react-icons/io5";
 import classNames from "classnames";
-import { useIncidents, usePollIncidents } from "utils/hooks/useIncidents";
-import {MdFlashOn} from "react-icons/md";
+import {
+  useIncidents,
+  usePollIncidents,
+} from "../../entities/incidents/model/useIncidents";
+import { MdFlashOn } from "react-icons/md";
 
 type IncidentsLinksProps = { session: Session | null };
 const SHOW_N_INCIDENTS = 3;
