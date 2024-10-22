@@ -29,7 +29,7 @@ const nextConfig = {
     removeConsole: false,
   },
   output: "standalone",
-  productionBrowserSourceMaps: process.env.ENV === "development",
+  productionBrowserSourceMaps: true,
   async redirects() {
     return process.env.DISABLE_REDIRECTS === "true"
       ? []
