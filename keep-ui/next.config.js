@@ -26,14 +26,7 @@ const nextConfig = {
     ],
   },
   compiler: {
-    removeConsole:
-      process.env.ENABLE_CONSOLE_LOGS === "true"
-        ? false
-        : process.env.NODE_ENV === "production"
-        ? {
-            exclude: ["error"],
-          }
-        : false,
+    removeConsole: false,
   },
   output: "standalone",
   productionBrowserSourceMaps: process.env.ENV === "development",
